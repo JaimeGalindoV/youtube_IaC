@@ -5,13 +5,13 @@ data "aws_ec2_managed_prefix_list" "cloudfront_origin_facing" {
 # 1. Security Group para el ALB
 resource "aws_security_group" "alb_sg" {
   name        = "youtube-alb-sg"
-  description = "Permitir trafico HTTPS entrante solo desde CloudFront"
+  description = "Permitir trafico HTTP entrante solo desde CloudFront"
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "HTTPS solo desde CloudFront"
-    from_port       = 443
-    to_port         = 443
+    description     = "HTTP solo desde CloudFront"
+    from_port       = 80
+    to_port         = 80
     protocol        = "tcp"
     prefix_list_ids = [data.aws_ec2_managed_prefix_list.cloudfront_origin_facing.id]
   }
