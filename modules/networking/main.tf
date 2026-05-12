@@ -34,8 +34,8 @@ resource "aws_subnet" "private_db" {
 
 # Internet Gateway
 resource "aws_internet_gateway" "igw" {
-  vpc_id  = aws_vpc.this.id
-  tags    = { Name = "youtube-igw" }
+  vpc_id = aws_vpc.this.id
+  tags   = { Name = "youtube-igw" }
 }
 
 # NAT Gateway (Solo uno en la primera subnet pública para ahorrar)

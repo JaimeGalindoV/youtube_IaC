@@ -8,3 +8,10 @@ module "networking" {
   private_db_cidrs    = ["10.0.21.0/24", "10.0.22.0/24"] # Para RDS
   availability_zones  = ["us-east-1a", "us-east-1b"]
 }
+
+# Módulo de Seguridad: Define quién habla con quién
+module "security" {
+  source = "./modules/security"
+
+  vpc_id = module.networking.vpc_id
+}
