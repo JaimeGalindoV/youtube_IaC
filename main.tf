@@ -15,3 +15,14 @@ module "security" {
 
   vpc_id = module.networking.vpc_id
 }
+
+module "storage" {
+  source = "./modules/storage"
+
+  private_db_subnets  = module.networking.private_db_subnets
+  db_sg_id            = module.security.db_sg_id
+  db_username         = var.db_username
+  db_password         = var.db_password
+  db_engine_version   = var.db_engine_version
+  video_bucket_prefix = var.video_bucket_prefix
+}
