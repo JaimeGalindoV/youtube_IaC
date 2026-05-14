@@ -7,9 +7,9 @@ terraform {
   }
 
   backend "s3" {
-    bucket  = "ourtube-iac"
-    key     = "back/terraform.tfstate"
-    region  = "us-east-1"
+    bucket = "ourtube-iac"
+    key    = "back/terraform.tfstate"
+    region = "us-east-1"
   }
 }
 

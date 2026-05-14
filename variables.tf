@@ -20,3 +20,9 @@ variable "video_bucket_prefix" {
   type        = string
   default     = "ourtube-videos"
 }
+
+variable "frontend_url" {
+  description = "URL del frontend para CORS/backend"
+  type        = string
+  default     = "http://localhost:3000"
+}

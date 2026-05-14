@@ -42,6 +42,18 @@ The repository defines a storage layer with:
 
 Detailed storage design, inputs, outputs, and module contract are documented in `modules/storage/README.md`.
 
+## Backend baseline
+
+The repository defines a backend application layer with:
+
+- Public ALB for API ingress
+- Target Group and HTTP listener
+- Launch Template with backend bootstrap script
+- Auto Scaling Group in private backend subnets
+- Backend app environment wiring (`FRONTEND_URL` and `DB_HOST`)
+
+Detailed backend design, inputs, outputs, and module contract are documented in `modules/backend/README.md`.
+
 ## Active module integration
 
 Root `main.tf` wires:
@@ -49,6 +61,7 @@ Root `main.tf` wires:
 - `module.networking` for VPC and subnet tiers
 - `module.security` for ALB/backend/DB SG controls
 - `module.storage` using `module.networking.private_db_subnets` and `module.security.db_sg_id`
+- `module.backend` using networking subnets, security SGs, and storage DB endpoint
 
 ## Terraform commands
 
