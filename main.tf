@@ -40,3 +40,10 @@ module "backend" {
   db_host         = module.storage.db_endpoint
   private_subnets = module.networking.private_back_subnets
 }
+
+# Modulo de Frontend: CloudFront + S3 para sitio estatico
+module "frontend" {
+  source = "./modules/frontend"
+
+  alb_dns_name = module.backend.alb_dns_name
+}
