@@ -18,9 +18,9 @@ provider "aws" {
 
   default_tags {
     tags = {
-      Owner   = "jdavila.sandoval@iteso.mx"
+      Owner   = "contact@jaimegv.dev"
       Team    = "team-1"
-      Project = "YouTube-Clone"
+      Project = "OurTube"
     }
   }
 }

@@ -33,6 +33,28 @@ variable "db_host" {
   type        = string
 }
 
+variable "db_name" {
+  description = "Nombre de la base de datos"
+  type        = string
+  default     = "youtubedb"
+}
+
+variable "db_user" {
+  description = "Usuario de la base de datos"
+  type        = string
+}
+
+variable "db_password" {
+  description = "Password de la base de datos"
+  type        = string
+  sensitive   = true
+}
+
+variable "storage_bucket_arn" {
+  description = "ARN del bucket S3 de storage para videos"
+  type        = string
+}
+
 variable "instance_type" {
   description = "Tipo de instancia EC2 del backend"
   type        = string
@@ -48,7 +70,7 @@ variable "app_port" {
 variable "health_check_path" {
   description = "Ruta para health check del target group"
   type        = string
-  default     = "/health"
+  default     = "/api/health"
 }
 
 variable "backend_repo_url" {

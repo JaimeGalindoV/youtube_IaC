@@ -24,5 +24,5 @@ variable "video_bucket_prefix" {
 variable "frontend_url" {
   description = "URL del frontend para CORS/backend"
   type        = string
-  default     = "http://localhost:3000"
+  default     = "https://ourtube.jaimegv.dev/"
 }

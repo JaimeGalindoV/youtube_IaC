@@ -1,7 +1,7 @@
 data "aws_caller_identity" "current" {}
 
 resource "aws_s3_bucket" "frontend" {
-  bucket = "${var.frontend_bucket_prefix}-${data.aws_caller_identity.current.account_id}"
+  bucket        = "${var.frontend_bucket_prefix}-${data.aws_caller_identity.current.account_id}"
   force_destroy = true
 }
 
@@ -84,8 +84,12 @@ resource "aws_cloudfront_distribution" "cdn" {
     geo_restriction { restriction_type = "none" }
   }
 
+  # Agrega el alias de tu dominio
+  aliases = ["ourtube.jaimegv.dev"]
   viewer_certificate {
-    cloudfront_default_certificate = true
+    acm_certificate_arn      = "arn:aws:acm:us-east-1:413368290265:certificate/ea235420-0c3e-46de-8fa3-37d6eca096ad"
+    ssl_support_method       = "sni-only"
+    minimum_protocol_version = "TLSv1.2_2021"
   }
 }
 

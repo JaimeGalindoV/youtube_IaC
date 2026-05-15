@@ -32,13 +32,17 @@ module "storage" {
 module "backend" {
   source = "./modules/backend"
 
-  alb_sg_id       = module.security.alb_sg_id
-  public_subnets  = module.networking.public_subnets
-  vpc_id          = module.networking.vpc_id
-  backend_sg_id   = module.security.backend_sg_id
-  frontend_url    = var.frontend_url
-  db_host         = module.storage.db_endpoint
-  private_subnets = module.networking.private_back_subnets
+  alb_sg_id          = module.security.alb_sg_id
+  public_subnets     = module.networking.public_subnets
+  vpc_id             = module.networking.vpc_id
+  backend_sg_id      = module.security.backend_sg_id
+  frontend_url       = var.frontend_url
+  db_host            = split(":", module.storage.db_endpoint)[0]
+  db_name            = "youtubedb"
+  db_user            = var.db_username
+  db_password        = var.db_password
+  storage_bucket_arn = module.storage.video_bucket_arn
+  private_subnets    = module.networking.private_back_subnets
 }
 
 # Modulo de Frontend: CloudFront + S3 para sitio estatico

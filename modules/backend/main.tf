@@ -45,9 +45,53 @@ data "aws_ami" "amazon_linux_2023" {
   }
 }
 
+data "aws_iam_policy_document" "ec2_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ec2.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role" "backend_ec2_role" {
+  name               = "youtube-backend-ec2-role"
+  assume_role_policy = data.aws_iam_policy_document.ec2_assume_role.json
+}
+
+data "aws_iam_policy_document" "backend_s3_access" {
+  statement {
+    effect = "Allow"
+    actions = [
+      "s3:GetObject",
+      "s3:PutObject",
+      "s3:DeleteObject"
+    ]
+    resources = ["${var.storage_bucket_arn}/*"]
+  }
+}
+
+resource "aws_iam_role_policy" "backend_s3_policy" {
+  name   = "youtube-backend-s3-access"
+  role   = aws_iam_role.backend_ec2_role.id
+  policy = data.aws_iam_policy_document.backend_s3_access.json
+}
+
+resource "aws_iam_instance_profile" "backend_profile" {
+  name = "youtube-backend-ec2-profile"
+  role = aws_iam_role.backend_ec2_role.name
+}
+
 resource "aws_launch_template" "backend_lt" {
   image_id      = data.aws_ami.amazon_linux_2023.id
   instance_type = var.instance_type
+
+  iam_instance_profile {
+    name = aws_iam_instance_profile.backend_profile.name
+  }
 
   network_interfaces {
     associate_public_ip_address = false
@@ -65,16 +109,29 @@ resource "aws_launch_template" "backend_lt" {
       git clone ${var.backend_repo_url} backend
     fi
     cd backend
+    echo "Completed! Starting backend setup..."
     pip3 install -r requirements.txt
-
+    echo "Requirements installed. Setting environment variables..."
     cat > .env <<ENVVARS
     FRONTEND_URL=${var.frontend_url}
     DB_HOST=${var.db_host}
+    DB_PORT=5432
+    DB_NAME=${var.db_name}
+    DB_USER=${var.db_user}
+    DB_PASSWORD=${var.db_password}
+    AWS_REGION=us-east-1
     UPLOAD_DIR=uploads
-    DB_PATH=videos.db
     ENVVARS
+    echo "Environment variables set. Starting the backend server..."
 
-    nohup python3 -m uvicorn main:app --host 0.0.0.0 --port ${var.app_port} > /var/log/backend.log 2>&1 &
+    # Lanzar uvicorn capturando errores en un archivo que podamos ver
+    nohup uvicorn main:app --host 0.0.0.0 --port ${var.app_port} > /home/ec2-user/app.log 2>&1 &
+
+    # Darle unos segundos y mostrar el log en el system output para que lo veas en la consola de AWS
+    sleep 5
+    cat /home/ec2-user/app.log
+
+    echo "Backend server started successfully!"
   EOF
   )
 
